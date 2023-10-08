@@ -17,75 +17,45 @@ class Program
             string userInput = Console.ReadLine();
             int number = int.Parse(userInput);
             if (number == 1) {
-                // Generating prompts in a really backwards way this was the best I could do
-                Prompts prompt1 = new Prompts();
-                prompt1._prompt = "What did you eat today?";
-                Prompts prompt2 = new Prompts();
-                prompt2._prompt = "Who did you talk to today?";
-                Prompts prompt3 = new Prompts();
-                prompt3._prompt = "What did you do for your missionary work today?";
-                Prompts prompt4 = new Prompts();
-                prompt4._prompt = "Did you have any ideas for decks?";
-                Prompts prompt5 = new Prompts();
-                prompt5._prompt = "Did you talk to Brittan today? What did you talk about?";
+                // Generating prompts
                 
-                // Getting an Entry and saving it to a text file
+                string prompt1 = "What did you eat today?";
+                string prompt2 = "Who did you talk to today?";
+                string prompt3 = "What did you do for your missionary work today?";
+                string prompt4 = "Did you have any ideas for decks?";
+                string prompt5 = "Did you talk to Brittan today? What did you talk about?";
+                
+                // Getting an Entry
                 Entry entry = new Entry();
                 entry._prompts.Add(prompt1);
                 entry._prompts.Add(prompt2);
                 entry._prompts.Add(prompt3);
                 entry._prompts.Add(prompt4);
                 entry._prompts.Add(prompt5);
-                var random = new Random();
-                entry._index = random.Next(entry._prompts.Count);
-                entry.GeneratePrompt();
+                var currentPrompt = entry.GeneratePrompt();
+                Console.WriteLine($"{currentPrompt}");
                 Console.Write("> ");
                 entry._entry = Console.ReadLine();
                 DateTime theCurrentTime = DateTime.Now;
-                entry._date = theCurrentTime.ToShortDateString();
-                string currentEntry = entry.GenerateEntry();
-                string unsaved = "Current Journal.txt";
-                using (StreamWriter outputFile = new StreamWriter(unsaved, true)){
-                    outputFile.WriteLine(currentEntry);
-                    outputFile.WriteLine("");
-                }
+
+                // Writing to a Journal
+                Journal newJournal = new Journal();
+                newJournal._date = theCurrentTime.ToShortDateString();
+                newJournal._currentPrompt = currentPrompt;
+                newJournal._currentEntry = entry._entry;
+                newJournal.StoreJournalEntry();
             }
             else if (number == 2) {
-                string fileName = "Current Journal.txt";
-                string[] lines = System.IO.File.ReadAllLines(fileName);
-                foreach (string line in lines) {
-                    Console.WriteLine(line);
-                }
+                Journal displayJournal = new Journal();
+                displayJournal.DisplayJournal();
             }
             else if (number == 3) {
-                Console.WriteLine("Please select a file to load from:");
-                Console.Write("> ");
-                string loadFile = Console.ReadLine();
-                string unsaved = "Current Journal.txt";
-                string[] oldEntries = System.IO.File.ReadAllLines(loadFile);
-                using (StreamWriter outputFile = new StreamWriter(unsaved)){
-                    outputFile.WriteLine("");
-                }
-                foreach (string line in oldEntries) {
-                    using (StreamWriter outputFile = new StreamWriter(unsaved, true)){
-                    outputFile.WriteLine(line);
-                    }
-                }
-                using (StreamWriter outputFile = new StreamWriter(unsaved)){
-                    outputFile.WriteLine("");
-                }
+                Journal loadJournal = new Journal();
+                loadJournal.LoadOldJournal();
             }
             else if (number == 4) {
-                Console.WriteLine("Please select a file to save to:");
-                Console.Write("> ");
-                string saveFile = Console.ReadLine();
-                string unsaved = "Current Journal.txt";
-                string[] newEntries = System.IO.File.ReadAllLines(unsaved);
-                foreach (string line in newEntries) {
-                    using (StreamWriter outputFile = new StreamWriter(saveFile, true)){
-                    outputFile.WriteLine(line);
-                    }
-                }
+                Journal saveJournal = new Journal();
+                saveJournal.SaveJournal();
             }
             else if (number == 5) {
                 Console.WriteLine("Thank you for using this journal! See you soon!");
